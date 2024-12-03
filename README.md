@@ -1,14 +1,14 @@
-# Ansible Role: HAProxy
+Ansible Role: HAProxy
 =========
 Installs HAProxy on RedHat/CentOS and Debian/Ubuntu Linux servers.
 
 **Note**: This role _officially_ supports HAProxy versions 1.4 or 1.5. Future versions may require some rework.
 
-## Requirements
+Requirements
 ------------
 * Ansible 2.2+ installed on the control machine.
 
-## Role Variables
+Role Variables
 --------------
 
 Available variables are listed below, along with default values (see `defaults/main.yml`):
@@ -60,12 +60,12 @@ HAProxy default timeout configurations.
 
 A list of extra global variables to add to the global configuration section inside `haproxy.cfg`.
 
-## Dependencies
+Dependencies
 --------------
 
 None.
 
-## Example Playbook
+Example Playbook
 --------------
 
     - hosts: balancer
@@ -73,12 +73,12 @@ None.
       roles:
         - { role: karen.haproxy }
 
-## License
+License
 --------------
 
 This role is licensed under the MIT License.
 
-## Author Information
+Author Information
 --------------
 
 This role was created in 2023 by Abbos Pulatov
