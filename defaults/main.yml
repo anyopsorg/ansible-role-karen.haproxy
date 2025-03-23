@@ -3,6 +3,16 @@ haproxy_socket: /var/lib/haproxy/stats
 haproxy_chroot: /var/lib/haproxy
 haproxy_user: haproxy
 haproxy_group: haproxy
+haproxy_monitoring_port: 8484
+haproxy_monitoring_enable: true
+haproxy_monitoring_uri: /
+haproxy_monitoring_refresh: 10
+haproxy_monitoring_auth: true
+haproxy_monitoring_user: admin
+haproxy_monitoring_password: admin
+haproxy_monitoring_whitelist: []
+haproxy_monitoring_blacklist: []
+haproxy_monitoring_bind_address: "127.0.0.1"
 
 # Frontend settings.
 haproxy_frontend_name: 'hafrontend'

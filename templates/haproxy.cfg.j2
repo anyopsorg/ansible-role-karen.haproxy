@@ -10,6 +10,7 @@ global
   user {{ haproxy_user }}
   group {{ haproxy_group }}
   daemon
+  pidfile /run/haproxy.pid
 {% for global_var in haproxy_global_vars %}
   {{ global_var }}
 {% endfor %}
@@ -35,6 +36,17 @@ defaults
   errorfile 502 /etc/haproxy/errors/502.http
   errorfile 503 /etc/haproxy/errors/503.http
   errorfile 504 /etc/haproxy/errors/504.http
+{% endif %}
+{% if haproxy_monitoring_enable %}
+listen stats
+  stats enable
+  mode http
+  bind {{ haproxy_monitoring_bind_address }}:{{ haproxy_monitoring_port }}
+  stats uri {{ haproxy_monitoring_uri }}
+  stats refresh {{ haproxy_monitoring_refresh }}
+{% if haproxy_monitoring_user != '' and haproxy_monitoring_password != ''  and haproxy_monitoring_auth %}
+  stats auth {{ haproxy_monitoring_user }}:{{ haproxy_monitoring_password }}
+{% endif %}
 {% endif %}
 {% for front in frontends %}
 frontend {{ front.haproxy_frontend_name }}
