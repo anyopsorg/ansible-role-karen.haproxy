@@ -29,5 +29,48 @@
     validate: haproxy -f %s -c -q
   notify: restart haproxy
 
+- name: Enable ip_nonlocal_bind
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: '1'
+    state: present
+    reload: yes
+
 - name: Ensure HAProxy is started and enabled on boot.
   service: name=haproxy state=started enabled=yes
+
+- name: Install keepalived package.
+  package:
+    name: keepalived
+    state: present
+  when: haproxy_keepalived_enable
+  register: keepalived_install
+
+- name: Stop Keepalived service.
+  ansible.builtin.systemd:
+    name: keepalived
+    state: stopped
+  ignore_errors: yes
+  when: haproxy_keepalived_enable and keepalived_install.changed
+
+- name: Copy haproxy check scripts.
+  ansible.builtin.template:
+    src: haproxy_check.sh.j2
+    dest: /etc/keepalived/haproxy_check.sh
+    mode: 0755
+
+- name: Copy notify script
+  ansible.builtin.template:
+    src: notify.sh.j2
+    dest: /etc/keepalived/notify.sh
+    mode: 0755
+
+- name: Copy keepalived configuration in place.
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    mode: 0644
+    validate: keepalived -n -f %s
+  when: haproxy_keepalived_enable
+  register: keepalived_config
+  notify: restart keepalived

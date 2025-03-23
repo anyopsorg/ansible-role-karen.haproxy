@@ -1,0 +1,32 @@
+global_defs {
+   router_id ocp_vrrp
+   enable_script_security
+   script_user root
+}
+
+vrrp_script chk_command_70 {
+   script "/etc/keepalived/haproxy_check.sh"
+   interval 2
+   weight 2
+}
+
+vrrp_instance VI_1 {
+    interface {{ haproxy_keepalived_interface | default('eth0') }}
+    virtual_router_id {{ haproxy_keepalived_virtual_router_id | default(1) }}
+    priority {{ haproxy_keepalived_priority | default(100) }}
+    advert_int {{ haproxy_keepalived_advert_int | default(1) }}
+    state {{ haproxy_keepalived_state | default('BACKUP') }}
+    virtual_ipaddress {
+        {{ haproxy_keepalived_vip }}
+    }
+    track_script {
+        chk_command_70
+    }
+    authentication {
+        auth_type PASS
+        auth_pass {{ haproxy_keepalived_auth_pass | default('haproxy') }}
+    }
+    notify_master "/etc/keepalived/notify.sh"
+    notify_backup "/etc/keepalived/notify.sh"
+    notify_fault "/etc/keepalived/notify.sh"  
+}
