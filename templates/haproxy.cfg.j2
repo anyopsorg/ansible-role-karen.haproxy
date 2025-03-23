@@ -40,7 +40,11 @@ defaults
 frontend {{ front.haproxy_frontend_name }}
     bind {{ front.haproxy_frontend_bind_address }}:{{ front.haproxy_frontend_port }}
     mode {{ front.haproxy_frontend_mode }}
+{% if front.haproxy_frontend_mode == 'tcp' %}    
     option tcplog
+{% elif front.haproxy_frontend_mode == 'http' %}
+    option httplog
+{% endif %}
     default_backend {{ front.backend_name }}
 {% endfor %}
 
@@ -48,8 +52,12 @@ frontend {{ front.haproxy_frontend_name }}
 backend {{ back.haproxy_backend_name }}
     mode {{ back.haproxy_backend_mode }}
     balance {{ back.haproxy_backend_balance_method }}
+{% if back.haproxy_backend_mode == 'http' %}
+    option httplog
+{% elif back.haproxy_backend_mode == 'tcp' %}    
     option tcplog
     option tcp-check
+{% endif %}
     default-server inter 10s downinter 5s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
 {% for backend in back.haproxy_backend_servers %}
     server {{ backend.name }} {{ backend.address }} cookie {{ backend.name }} check
