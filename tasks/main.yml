@@ -58,12 +58,14 @@
     src: haproxy_check.sh.j2
     dest: /etc/keepalived/haproxy_check.sh
     mode: 0755
+  when: haproxy_keepalived_enable
 
 - name: Copy notify script
   ansible.builtin.template:
     src: notify.sh.j2
     dest: /etc/keepalived/notify.sh
     mode: 0755
+  when: haproxy_keepalived_enable
 
 - name: Copy keepalived configuration in place.
   template:
